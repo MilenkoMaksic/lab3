@@ -41,12 +41,21 @@
 int main()
 {
 	unsigned int DataRead;
+	unsigned int OldData;
     init_platform();
 
-    print("Hello World\n\r");
+    xil_printf("%c[2J", 27);
+
+    OldData = (unsigned int) 0xffffffff;
     while(1){
-    	DataRead = XIo_In32(XPAR_DIP_SWITCHES_BASEADDR);
-    	xil_printf("\n\rDataRead = %x", DataRead);
+    	DataRead = XIo_In32(XPAR_MY_PERIPHERAL_0_BASEADDR);
+    	if(DataRead != OldData){
+    		xil_printf("DIP Switch settings: 0x%2X\r\n", DataRead);
+
+    		XIo_Out32(XPAR_MY_PERIPHERAL_0_BASEADDR, DataRead);
+
+    		OldData = DataRead;
+    	}
     }
 
     return 0;

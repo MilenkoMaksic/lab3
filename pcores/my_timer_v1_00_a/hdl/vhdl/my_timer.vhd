@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- my_peripheral.vhd - entity/architecture pair
+-- my_timer.vhd - entity/architecture pair
 ------------------------------------------------------------------------------
 -- IMPORTANT:
 -- DO NOT MODIFY THIS FILE EXCEPT IN THE DESIGNATED SECTIONS.
@@ -32,10 +32,10 @@
 -- ***************************************************************************
 --
 ------------------------------------------------------------------------------
--- Filename:          my_peripheral.vhd
+-- Filename:          my_timer.vhd
 -- Version:           1.00.a
 -- Description:       Top level design, instantiates library components and user logic.
--- Date:              Mon Mar 18 12:05:55 2019 (by Create and Import Peripheral Wizard)
+-- Date:              Thu Mar 21 11:54:00 2019 (by Create and Import Peripheral Wizard)
 -- VHDL Standard:     VHDL'93
 ------------------------------------------------------------------------------
 -- Naming Conventions:
@@ -69,8 +69,8 @@ use proc_common_v3_00_a.ipif_pkg.all;
 library axi_lite_ipif_v1_01_a;
 use axi_lite_ipif_v1_01_a.axi_lite_ipif;
 
-library my_peripheral_v1_00_a;
-use my_peripheral_v1_00_a.user_logic;
+library my_timer_v1_00_a;
+use my_timer_v1_00_a.user_logic;
 
 ------------------------------------------------------------------------------
 -- Entity section
@@ -111,7 +111,7 @@ use my_peripheral_v1_00_a.user_logic;
 --   S_AXI_AWREADY                -- AXI4LITE slave: Wrte address ready
 ------------------------------------------------------------------------------
 
-entity my_peripheral is
+entity my_timer is
   generic
   (
     -- ADD USER GENERICS BELOW THIS LINE ---------------
@@ -137,8 +137,6 @@ entity my_peripheral is
   port
   (
     -- ADD USER PORTS BELOW THIS LINE ------------------
-    LED_Data : out std_logic_vector(7 downto 0);
-    DIP_Data : in std_logic_vector(7 downto 0);
     --USER ports added here
     -- ADD USER PORTS ABOVE THIS LINE ------------------
 
@@ -172,13 +170,13 @@ entity my_peripheral is
   attribute MAX_FANOUT of S_AXI_ARESETN       : signal is "10000";
   attribute SIGIS of S_AXI_ACLK       : signal is "Clk";
   attribute SIGIS of S_AXI_ARESETN       : signal is "Rst";
-end entity my_peripheral;
+end entity my_timer;
 
 ------------------------------------------------------------------------------
 -- Architecture section
 ------------------------------------------------------------------------------
 
-architecture IMP of my_peripheral is
+architecture IMP of my_timer is
 
   constant USER_SLV_DWIDTH                : integer              := C_S_AXI_DATA_WIDTH;
 
@@ -194,7 +192,7 @@ architecture IMP of my_peripheral is
       ZERO_ADDR_PAD & USER_SLV_HIGHADDR   -- user logic slave space high address
     );
 
-  constant USER_SLV_NUM_REG               : integer              := 1;
+  constant USER_SLV_NUM_REG               : integer              := 4;
   constant USER_NUM_REG                   : integer              := USER_SLV_NUM_REG;
   constant TOTAL_IPIF_CE                  : integer              := USER_NUM_REG;
 
@@ -290,7 +288,7 @@ begin
   ------------------------------------------
   -- instantiate User Logic
   ------------------------------------------
-  USER_LOGIC_I : entity my_peripheral_v1_00_a.user_logic
+  USER_LOGIC_I : entity my_timer_v1_00_a.user_logic
     generic map
     (
       -- MAP USER GENERICS BELOW THIS LINE ---------------
@@ -303,8 +301,6 @@ begin
     port map
     (
       -- MAP USER PORTS BELOW THIS LINE ------------------
-      LED_Data => LED_Data,
-      DIP_Data => DIP_Data,
       --USER ports mapped here
       -- MAP USER PORTS ABOVE THIS LINE ------------------
 

@@ -26,7 +26,7 @@
 -- Filename:          user_logic.vhd
 -- Version:           1.00.a
 -- Description:       User logic.
--- Date:              Mon Mar 18 12:05:55 2019 (by Create and Import Peripheral Wizard)
+-- Date:              Thu Mar 21 11:54:00 2019 (by Create and Import Peripheral Wizard)
 -- VHDL Standard:     VHDL'93
 ------------------------------------------------------------------------------
 -- Naming Conventions:
@@ -90,15 +90,13 @@ entity user_logic is
 
     -- DO NOT EDIT BELOW THIS LINE ---------------------
     -- Bus protocol parameters, do not add to or delete
-    C_NUM_REG                      : integer              := 1;
+    C_NUM_REG                      : integer              := 4;
     C_SLV_DWIDTH                   : integer              := 32
     -- DO NOT EDIT ABOVE THIS LINE ---------------------
   );
   port
   (
     -- ADD USER PORTS BELOW THIS LINE ------------------
-    LED_Data : out std_logic_vector(7 downto 0);
-    DIP_Data : in std_logic_vector(7 downto 0);
     --USER ports added here
     -- ADD USER PORTS ABOVE THIS LINE ------------------
 
@@ -132,13 +130,21 @@ end entity user_logic;
 architecture IMP of user_logic is
 
   --USER signal declarations added here, as needed for user logic
+  
+  signal timer_count : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
+  signal timer_count_tc : std_logic;
+  signal timer_count_en : std_logic;
+  
 
   ------------------------------------------
   -- Signals for user logic slave model s/w accessible register example
   ------------------------------------------
   signal slv_reg0                       : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
-  signal slv_reg_write_sel              : std_logic_vector(0 to 0);
-  signal slv_reg_read_sel               : std_logic_vector(0 to 0);
+  signal slv_reg1                       : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
+  signal slv_reg2                       : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
+  signal slv_reg3                       : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
+  signal slv_reg_write_sel              : std_logic_vector(3 downto 0);
+  signal slv_reg_read_sel               : std_logic_vector(3 downto 0);
   signal slv_ip2bus_data                : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
   signal slv_read_ack                   : std_logic;
   signal slv_write_ack                  : std_logic;
@@ -146,8 +152,36 @@ architecture IMP of user_logic is
 begin
 
   --USER logic implementation added here
+  process(Bus2IP_Clk, Bus2IP_Resetn)
+  begin
+  	if Bus2IP_Resetn = '0' then
+  		timer_count <= (other => '0');
+  	elsif rising_edge(Bus2IP_Clk) then
+  		if(timer_count_en = '1') then
+  			if(timer_count_tc = '1') then
+  				timer_count <= (other => '0');
+  			else
+  				timer_count <= timer_count + 1;
+  			end if;
+  		end if;
+  	end if;
+  end process;
   
-  LED_Data <= slv_reg0(7 downto 0);
+  timer_count_en <= slv_reg1(1);
+  timer_count_tc <= '1' when (timer_count >= (slv_reg0 - 1)) else '0';
+  
+  process(Bus2IP_Clk) is
+  begin
+  	if Bus2IP_Clk'event and Bus2IP_Clk = '1' then
+  		if Bus2IP_Resetn = '0' then
+  			my_timer_irq <= '0';
+  		else
+  			my_timer_irq <= timer_count_tc;
+  		end if;
+  	end if;
+  end process;
+   
+  
 
   ------------------------------------------
   -- Example code to read/write user logic slave model s/w accessible registers
@@ -167,10 +201,10 @@ begin
   --                     "0001"   C_BASEADDR + 0xC
   -- 
   ------------------------------------------
-  slv_reg_write_sel <= Bus2IP_WrCE(0 downto 0);
-  slv_reg_read_sel  <= Bus2IP_RdCE(0 downto 0);
-  slv_write_ack     <= Bus2IP_WrCE(0);
-  slv_read_ack      <= Bus2IP_RdCE(0);
+  slv_reg_write_sel <= Bus2IP_WrCE(3 downto 0);
+  slv_reg_read_sel  <= Bus2IP_RdCE(3 downto 0);
+  slv_write_ack     <= Bus2IP_WrCE(0) or Bus2IP_WrCE(1) or Bus2IP_WrCE(2) or Bus2IP_WrCE(3);
+  slv_read_ack      <= Bus2IP_RdCE(0) or Bus2IP_RdCE(1) or Bus2IP_RdCE(2) or Bus2IP_RdCE(3);
 
   -- implement slave model software accessible register(s)
   SLAVE_REG_WRITE_PROC : process( Bus2IP_Clk ) is
@@ -179,12 +213,33 @@ begin
     if Bus2IP_Clk'event and Bus2IP_Clk = '1' then
       if Bus2IP_Resetn = '0' then
         slv_reg0 <= (others => '0');
+        slv_reg1 <= (others => '0');
+        slv_reg2 <= (others => '0');
+        slv_reg3 <= (others => '0');
       else
         case slv_reg_write_sel is
-          when "1" =>
+          when "1000" =>
             for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
               if ( Bus2IP_BE(byte_index) = '1' ) then
                 slv_reg0(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
+              end if;
+            end loop;
+          when "0100" =>
+            for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
+              if ( Bus2IP_BE(byte_index) = '1' ) then
+                slv_reg1(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
+              end if;
+            end loop;
+          when "0010" =>
+            for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
+              if ( Bus2IP_BE(byte_index) = '1' ) then
+                slv_reg2(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
+              end if;
+            end loop;
+          when "0001" =>
+            for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
+              if ( Bus2IP_BE(byte_index) = '1' ) then
+                slv_reg3(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
               end if;
             end loop;
           when others => null;
@@ -195,11 +250,14 @@ begin
   end process SLAVE_REG_WRITE_PROC;
 
   -- implement slave model software accessible register(s) read mux
-  SLAVE_REG_READ_PROC : process( slv_reg_read_sel, slv_reg0 ) is
+  SLAVE_REG_READ_PROC : process( slv_reg_read_sel, slv_reg0, slv_reg1, slv_reg2, slv_reg3, timer_count, timer_count_tc, timer_count_en ) is
   begin
 
     case slv_reg_read_sel is
-      when "1" => slv_ip2bus_data <= slv_reg0;
+      when "1000" => slv_ip2bus_data <= slv_reg0;
+      when "0100" => slv_ip2bus_data <= slv_reg1(31 downto 2) & timer_count_en & timer_count_tc;
+      when "0010" => slv_ip2bus_data <= timer_count;
+      when "0001" => slv_ip2bus_data <= slv_reg3;
       when others => slv_ip2bus_data <= (others => '0');
     end case;
 
@@ -208,8 +266,8 @@ begin
   ------------------------------------------
   -- Example code to drive IP to Bus signals
   ------------------------------------------
- IP2Bus_Data(31 downto 8) <= (others => '0');
- IP2Bus_Data(7 downto 0) <= DIP_Data(7 downto 0);
+  IP2Bus_Data  <= slv_ip2bus_data when slv_read_ack = '1' else
+                  (others => '0');
 
   IP2Bus_WrAck <= slv_write_ack;
   IP2Bus_RdAck <= slv_read_ack;
