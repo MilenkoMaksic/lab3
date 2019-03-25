@@ -1,0 +1,10 @@
+-batch 
+-create vga_peripheral 
+-ver 1.00.a 
+-dir "D:\ra11-2016\lab3" 
+-lang vhdl 
+-bus axi4lite s 
+-reg 1 
+-xps 
+-ise 
+-driver 
