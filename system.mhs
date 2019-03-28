@@ -14,10 +14,22 @@
  PORT RS232_Uart_1_sout = RS232_Uart_1_sout, DIR = O
  PORT RS232_Uart_1_sin = RS232_Uart_1_sin, DIR = I
  PORT RESET = RESET, DIR = I, SIGIS = RST, RST_POLARITY = 0
- PORT LEDS_TRI_O = my_peripheral_0_LED_Data, DIR = O, VEC = [0:7]
  PORT DIP_Switches_TRI_I = DIP_Switches_TRI_I, DIR = I, VEC = [0:7]
  PORT CLK_P = CLK, DIR = I, DIFFERENTIAL_POLARITY = P, SIGIS = CLK, CLK_FREQ = 50000000
  PORT CLK_N = CLK, DIR = I, DIFFERENTIAL_POLARITY = N, SIGIS = CLK, CLK_FREQ = 50000000
+ PORT vga_peripheral_0_clk_i_pin = net_vga_peripheral_0_clk_i_pin, DIR = I, SIGIS = CLK
+ PORT vga_peripheral_0_reset_n_i_pin = net_vga_peripheral_0_reset_n_i_pin, DIR = I, SIGIS = RST
+ PORT vga_peripheral_0_direct_mode_i_pin = net_vga_peripheral_0_direct_mode_i_pin, DIR = I
+ PORT vga_peripheral_0_display_mode_i_pin = net_vga_peripheral_0_display_mode_i_pin, DIR = I, VEC = [1:0]
+ PORT vga_peripheral_0_vga_hsync_o_pin = vga_peripheral_0_vga_hsync_o, DIR = O
+ PORT vga_peripheral_0_vga_vsync_o_pin = vga_peripheral_0_vga_vsync_o, DIR = O
+ PORT vga_peripheral_0_blank_o_pin = vga_peripheral_0_blank_o, DIR = O
+ PORT vga_peripheral_0_pix_clock_o_pin = vga_peripheral_0_pix_clock_o, DIR = O
+ PORT vga_peripheral_0_psave_o_pin = vga_peripheral_0_psave_o, DIR = O
+ PORT vga_peripheral_0_sync_o_pin = vga_peripheral_0_sync_o, DIR = O
+ PORT vga_peripheral_0_red_o_pin = vga_peripheral_0_red_o, DIR = O, VEC = [7:0]
+ PORT vga_peripheral_0_green_o_pin = vga_peripheral_0_green_o, DIR = O, VEC = [7:0]
+ PORT vga_peripheral_0_blue_o_pin = vga_peripheral_0_blue_o, DIR = O, VEC = [7:0]
 
 
 BEGIN proc_sys_reset
@@ -158,27 +170,6 @@ BEGIN axi_gpio
  PORT GPIO_IO_I = DIP_Switches_TRI_I
 END
 
-BEGIN my_peripheral
- PARAMETER INSTANCE = my_peripheral_0
- PARAMETER HW_VER = 1.00.a
- PARAMETER C_SLV_AWIDTH = 34
- PARAMETER C_BASEADDR = 0x7de00000
- PARAMETER C_HIGHADDR = 0x7de0ffff
- BUS_INTERFACE S_AXI = axi4lite_0
- PORT S_AXI_ACLK = clk_100_0000MHz
- PORT DIP_Data = DIP_Switches_TRI_I
- PORT LED_Data = my_peripheral_0_LED_Data
-END
-
-BEGIN my_timer
- PARAMETER INSTANCE = my_timer_0
- PARAMETER HW_VER = 1.00.a
- PARAMETER C_BASEADDR = 0x70a00000
- PARAMETER C_HIGHADDR = 0x70a0ffff
- BUS_INTERFACE S_AXI = axi4lite_0
- PORT S_AXI_ACLK = clk_100_0000MHz
-END
-
 BEGIN axi_intc
  PARAMETER INSTANCE = axi_intc_0
  PARAMETER HW_VER = 1.04.a
@@ -186,5 +177,27 @@ BEGIN axi_intc
  PARAMETER C_HIGHADDR = 0x4120ffff
  BUS_INTERFACE S_AXI = axi4lite_0
  PORT S_AXI_ACLK = clk_100_0000MHz
+END
+
+BEGIN vga_peripheral
+ PARAMETER INSTANCE = vga_peripheral_0
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BASEADDR = 0x7fc00000
+ PARAMETER C_HIGHADDR = 0x7fc0ffff
+ BUS_INTERFACE S_AXI = axi4lite_0
+ PORT S_AXI_ACLK = clk_100_0000MHz
+ PORT clk_i = net_vga_peripheral_0_clk_i_pin
+ PORT reset_n_i = net_vga_peripheral_0_reset_n_i_pin
+ PORT direct_mode_i = net_vga_peripheral_0_direct_mode_i_pin
+ PORT display_mode_i = net_vga_peripheral_0_display_mode_i_pin
+ PORT vga_hsync_o = vga_peripheral_0_vga_hsync_o
+ PORT vga_vsync_o = vga_peripheral_0_vga_vsync_o
+ PORT blank_o = vga_peripheral_0_blank_o
+ PORT pix_clock_o = vga_peripheral_0_pix_clock_o
+ PORT psave_o = vga_peripheral_0_psave_o
+ PORT sync_o = vga_peripheral_0_sync_o
+ PORT red_o = vga_peripheral_0_red_o
+ PORT green_o = vga_peripheral_0_green_o
+ PORT blue_o = vga_peripheral_0_blue_o
 END
 

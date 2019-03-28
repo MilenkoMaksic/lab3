@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--This is an ISE project configuration file.-->
 <!--It holds project specific layout data for the projectmgr plugin.-->
 <!--Copyright (c) 1995-2009 Xilinx, Inc.  All rights reserved.-->
@@ -10,7 +10,6 @@
          <ClosedNode>/Unassigned User Library Modules</ClosedNode>
          <ClosedNode>/vga_peripheral - IMP D:|ra11-2016|lab3|pcores|vga_peripheral_v1_00_a|hdl|vhdl|vga_peripheral.vhd/AXI_LITE_IPIF_I - axi_lite_ipif - imp</ClosedNode>
          <ClosedNode>/vga_peripheral - IMP D:|ra11-2016|lab3|pcores|vga_peripheral_v1_00_a|hdl|vhdl|vga_peripheral.vhd/USER_LOGIC_I - user_logic - IMP/vga_top_i - vga_top - rtl/char_rom_i - char_rom - Behavioral</ClosedNode>
-         <ClosedNode>/vga_peripheral - IMP D:|ra11-2016|lab3|pcores|vga_peripheral_v1_00_a|hdl|vhdl|vga_peripheral.vhd/USER_LOGIC_I - user_logic - IMP/vga_top_i - vga_top - rtl/vga_i - vga - rtl</ClosedNode>
       </ClosedNodes>
       <SelectedItems>
          <SelectedItem>vga_peripheral - IMP (D:/ra11-2016/lab3/pcores/vga_peripheral_v1_00_a/hdl/vhdl/vga_peripheral.vhd)</SelectedItem>
@@ -30,13 +29,13 @@
          <ClosedNode>User Constraints</ClosedNode>
       </ClosedNodes>
       <SelectedItems>
-         <SelectedItem></SelectedItem>
+         <SelectedItem>Synthesize - XST</SelectedItem>
       </SelectedItems>
       <ScrollbarPosition orientation="vertical" >0</ScrollbarPosition>
       <ScrollbarPosition orientation="horizontal" >0</ScrollbarPosition>
       <ViewHeaderState orientation="horizontal" >000000ff000000000000000100000001000000000000000000000000000000000000000000000000c9000000010000000100000000000000000000000064ffffffff000000810000000000000001000000c90000000100000000</ViewHeaderState>
       <UserChangedColumnWidths orientation="horizontal" >false</UserChangedColumnWidths>
-      <CurrentItem></CurrentItem>
+      <CurrentItem>Synthesize - XST</CurrentItem>
    </ItemView>
    <ItemView guiview="File" >
       <ClosedNodes>
@@ -70,13 +69,13 @@
          <ClosedNode>Design Utilities</ClosedNode>
       </ClosedNodes>
       <SelectedItems>
-         <SelectedItem></SelectedItem>
+         <SelectedItem/>
       </SelectedItems>
       <ScrollbarPosition orientation="vertical" >0</ScrollbarPosition>
       <ScrollbarPosition orientation="horizontal" >0</ScrollbarPosition>
       <ViewHeaderState orientation="horizontal" >000000ff000000000000000100000001000000000000000000000000000000000000000000000000c9000000010000000100000000000000000000000064ffffffff000000810000000000000001000000c90000000100000000</ViewHeaderState>
       <UserChangedColumnWidths orientation="horizontal" >false</UserChangedColumnWidths>
-      <CurrentItem></CurrentItem>
+      <CurrentItem/>
    </ItemView>
    <SourceProcessView>000000ff00000000000000020000011b0000011b01000000050100000002</SourceProcessView>
    <CurrentView>Implementation</CurrentView>
