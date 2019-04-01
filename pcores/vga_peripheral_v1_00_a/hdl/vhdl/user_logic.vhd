@@ -94,7 +94,8 @@ entity user_logic is
     -- DO NOT EDIT BELOW THIS LINE ---------------------
     -- Bus protocol parameters, do not add to or delete
     C_NUM_REG                      : integer              := 1;
-    C_SLV_DWIDTH                   : integer              := 32
+    C_SLV_DWIDTH                   : integer              := 32;
+	 C_S_AXI_ADDR_WIDTH             : integer              := 32
     -- DO NOT EDIT ABOVE THIS LINE ---------------------
   );
   port
@@ -128,8 +129,12 @@ entity user_logic is
     IP2Bus_Data                    : out std_logic_vector(C_SLV_DWIDTH-1 downto 0);
     IP2Bus_RdAck                   : out std_logic;
     IP2Bus_WrAck                   : out std_logic;
-    IP2Bus_Error                   : out std_logic
+    IP2Bus_Error                   : out std_logic;
+	 Bus2IP_Addr           : out std_logic_vector((C_S_AXI_ADDR_WIDTH-1) downto 0);
+    Bus2IP_RNW            : out std_logic;
+	 Bus2IP_CS : out std_logic
     -- DO NOT EDIT ABOVE THIS LINE ---------------------
+	 
   );
 
   attribute MAX_FANOUT : string;
@@ -279,6 +284,10 @@ architecture IMP of user_logic is
   signal slv_ip2bus_data                : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
   signal slv_read_ack                   : std_logic;
   signal slv_write_ack                  : std_logic;
+  
+  signal global_we 							 :std_logic;
+  signal unit_addr                      : std_logic_vector(22 downto 0); 
+  signal unit_id : std_logic_vector(1 downto 0);
 
 begin
 
@@ -435,6 +444,12 @@ begin
   IP2Bus_RdAck <= slv_read_ack;
   IP2Bus_Error <= '0';
   
+  unit_addr <= Bus2IP_Addr(23 downto 2);
+  unit_id <= Bus2IP_Addr(25 downto 24);
+  global_we <= Bus2IP_CS and not(Bus2IP_RNW);
+  
+  
+
   dir_red <= x"ff" when dir_pixel_column < 80 else
 				x"ff" when dir_pixel_column < 160 else
 				x"00" when dir_pixel_column < 240 else
